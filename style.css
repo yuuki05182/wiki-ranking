@@ -73,6 +73,13 @@ footer {
   color: #888;
 }
 
+.intro {
+  text-align: center;
+  font-size: 1em;
+  margin-bottom: 1.5em;
+  color: #555;
+}
+
 /* スマホ向け調整 */
 @media screen and (max-width: 600px) {
   body {
