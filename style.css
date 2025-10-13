@@ -21,16 +21,21 @@ p {
   margin-bottom: 0.5em;
 }
 
+/* 通常の table スタイル（PC向け） */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 2em;
   background-color: #fff;
   box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
 
- /* スマホ対応を追加 */
-  display: block;
-  overflow-x: auto;
+/* スマホだけに横スクロールを許可 */
+@media screen and (max-width: 600px) {
+  table {
+    display: block;
+    overflow-x: auto;
+  }
 }
 
 th, td {
