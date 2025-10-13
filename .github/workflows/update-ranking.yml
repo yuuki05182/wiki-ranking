@@ -1,0 +1,34 @@
+name: Wikipediaランキング自動更新
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # JST 17:00 → UTC 08:00
+  workflow_dispatch:     # 手動実行も可能
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v3
+
+      - name: Pythonをセットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 必要なパッケージをインストール
+        run: |
+          pip install requests
+
+      - name: ランキングを生成
+        run: python generate_ranking.py
+
+      - name: 変更をコミット
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add ranking.json
+          git commit -m "自動更新: $(date '+%Y-%m-%d')"
+          git push
