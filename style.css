@@ -27,6 +27,10 @@ table {
   margin-bottom: 2em;
   background-color: #fff;
   box-shadow: 0 0 5px rgba(0,0,0,0.1);
+
+ /* スマホ対応を追加 */
+  display: block;
+  overflow-x: auto;
 }
 
 th, td {
