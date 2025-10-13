@@ -4,6 +4,9 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from collections import defaultdict
 
+now_jst = datetime.now(ZoneInfo("Asia/Tokyo"))
+timestamp = now_jst.strftime('%Y年%m月%d日 %H:%M:%S')
+
 # User-Agent（Wikimediaのポリシーに準拠）
 HEADERS = {
     'User-Agent': 'YukiBot/1.0 (https://github.com/yimam)'  # ご自身のURLや連絡先に変更してください
@@ -121,6 +124,23 @@ output = {
     }
 }
 
-# JSONファイルに保存
-with open('ranking.json', 'w', encoding='utf-8') as f:
+output['更新時刻'] = timestamp
+
+print(f"\n📅 更新時刻（JST）: {timestamp}")
+
+import os
+
+# スクリプト自身の場所を取得（絶対パス）
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# 保存先をスクリプトと同じ場所に固定
+save_path = os.path.join(script_dir, 'ranking.json')
+
+# 保存処理
+with open(save_path, 'w', encoding='utf-8') as f:
     json.dump(output, f, ensure_ascii=False, indent=2)
+
+# 保存後に確認
+with open(save_path, 'r', encoding='utf-8') as f:
+    preview = json.load(f)
+    print("\n✅ 保存された更新時刻:", preview.get('更新時刻', '見つかりませんでした'))

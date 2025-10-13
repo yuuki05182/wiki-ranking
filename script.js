@@ -13,8 +13,13 @@ const sections = [
 fetch('ranking.json')
   .then(response => response.json())
   .then(data => {
-    const content = document.getElementById('content');
+    // ✅ 更新時刻の表示
+    if (data['更新時刻']) {
+      const updatedTime = document.getElementById('updated-time');
+      updatedTime.textContent = `更新日時：${data['更新時刻']}`;
+    }
 
+    const content = document.getElementById('content');
     sections.forEach(section => {
       const block = document.createElement('section');
       block.innerHTML = `
