@@ -1,3 +1,4 @@
+/* 全体の基本スタイル */
 body {
   font-family: "Helvetica Neue", sans-serif;
   background-color: #f5f5f5;
@@ -6,57 +7,90 @@ body {
   line-height: 1.6;
 }
 
+/* コンテンツ中央揃え */
+#content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* タイトル */
 h1 {
   text-align: center;
   color: #2c3e50;
+  font-size: 2em;
 }
 
+/* セクション見出し */
 h2 {
   margin-top: 2em;
   color: #34495e;
+  font-size: 1.5em;
 }
 
+/* 日付表示 */
 p {
   font-size: 1em;
   margin-bottom: 0.5em;
 }
 
-/* 通常の table スタイル（PC向け） */
+/* ランキング表 */
 table {
   width: 100%;
+  max-width: 600px;         /* 表の最大幅を制限 */
+  margin: 0 auto;           /* 中央揃え */
   border-collapse: collapse;
-  margin-bottom: 2em;
   background-color: #fff;
   box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  margin-bottom: 2em;
 }
 
-/* スマホだけに横スクロールを許可 */
-@media screen and (max-width: 600px) {
-  table {
-    display: block;
-    overflow-x: auto;
-    margin: 0 auto;
-  }
-}
-
+/* 表のセル */
 th, td {
   padding: 0.6em;
   border: 1px solid #ccc;
   text-align: left;
+  font-size: 0.95em;
+  word-break: break-word;
 }
 
+/* ヘッダー行 */
 th {
   background-color: #ecf0f1;
   font-weight: bold;
 }
 
+/* 偶数行の背景色 */
 tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 
+/* フッター */
 footer {
   text-align: center;
   margin-top: 4em;
   font-size: 0.9em;
   color: #888;
+}
+
+/* スマホ向け調整 */
+@media screen and (max-width: 600px) {
+  body {
+    margin: 1em;
+  }
+  h1 {
+    font-size: 1.4em;
+  }
+  h2 {
+    font-size: 1.2em;
+  }
+  th, td {
+    font-size: 0.85em;
+    padding: 0.4em;
+  }
+  table {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
 }
