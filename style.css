@@ -22,6 +22,8 @@ h1 {
 }
 
 .intro {
+  display: block;
+  width: 100%;
   text-align: center;
   font-size: 1em;
   margin-bottom: 1.5em;
