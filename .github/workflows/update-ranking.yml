@@ -2,7 +2,7 @@ name: Wikipediaランキング自動更新
 
 on:
   schedule:
-    - cron: '0 8 * * *'  # JST 17:00 → UTC 08:00
+    - cron: '0 1 * * *'  # JST 10:00 → UTC 01:00
   workflow_dispatch:     # 手動実行も可能
 
 permissions:
