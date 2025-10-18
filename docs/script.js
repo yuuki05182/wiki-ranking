@@ -9,21 +9,30 @@ function formatDate(dateStr) {
 fetch('ranking.json')
   .then(response => response.json())
   .then(data => {
-    // ✅ 更新時刻の表示
     if (data['更新時刻']) {
       const updatedTime = document.getElementById('updated-time');
-      updatedTime.textContent = `更新日時：${data['更新時刻']}`;
+      updatedTime.textContent = `最終更新：${data['更新時刻']}`;
     }
 
     const content = document.getElementById('content');
-
-    // ✅ 期間ラベルを動的に取得（更新時刻を除外）
     const sections = Object.keys(data).filter(key => key !== '更新時刻');
 
     sections.forEach(section => {
       const block = document.createElement('section');
+
+      // ラベル生成（日付 or 開始日〜終了日）
+      let label = '';
+      if (data[section].日付) {
+        label = data[section].日付 + 'のランキング';
+      } else if (data[section].開始日 && data[section].終了日) {
+        label = `${data[section].開始日}9時00分から${data[section].終了日}8時59分の累計ランキング`;
+      } else {
+        label = section; // フォールバック
+      }
+
       block.innerHTML = `
         <h2>${section}</h2>
+        <p><strong>${label}</strong></p>
         <table>
           <thead>
             <tr><th>順位</th><th>記事タイトル</th><th>閲覧数</th></tr>
