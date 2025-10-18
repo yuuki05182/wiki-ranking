@@ -142,7 +142,7 @@ import os
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # 保存先をスクリプトと同じ場所に固定
-save_path = os.path.join(script_dir, 'ranking.json')
+save_path = os.path.join(script_dir, 'docs', 'ranking.json')
 
 # 保存処理
 with open(save_path, 'w', encoding='utf-8') as f:
