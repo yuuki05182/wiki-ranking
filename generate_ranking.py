@@ -153,13 +153,12 @@ import shutil
 source_js = os.path.join(script_dir, 'script.js')
 target_js = os.path.join(script_dir, 'docs', 'script.js')
 os.makedirs(os.path.dirname(target_js), exist_ok=True)
-shutil.copy2(source_js, target_js)
-print(f"✅ script.js を docs フォルダに保存しました：{target_js}")
 
-# 保存後に確認
-with open(save_path, 'r', encoding='utf-8') as f:
-    preview = json.load(f)
-    print("\n✅ 保存された更新時刻:", preview.get('更新時刻', '見つかりませんでした'))
+if os.path.exists(source_js):
+    shutil.copy2(source_js, target_js)
+    print(f"✅ script.js を docs フォルダに保存しました：{target_js}")
+else:
+    print("⚠️ コピー元の script.js が見つかりませんでした")
 
 # スクリプトと同じ階層にある script.js を削除
 script_path_to_delete = os.path.join(script_dir, 'script.js')
@@ -169,7 +168,6 @@ if os.path.exists(script_path_to_delete):
     print(f"🗑️ script.js を削除しました：{script_path_to_delete}")
 else:
     print("⚠️ 削除対象の script.js が見つかりませんでした（すでに削除済みか存在しない可能性）")
-
 
 # 保存後に確認
 with open(save_path, 'r', encoding='utf-8') as f:
