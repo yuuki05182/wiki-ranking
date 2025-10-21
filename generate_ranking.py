@@ -52,7 +52,18 @@ def accumulate_views(start_date, end_date):
         articles = get_topviews(date_str)
         for a in articles:
             view_counts[a['article']] += a['views']
-    return sorted(view_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+    return sorted(view_counts.items(), key=lambda x: x[1], reverse=True)
+
+def accumulate_daily_views(start_date, end_date):
+    daily_views = defaultdict(list)
+    delta = (end_date - start_date).days + 1
+    for i in range(delta):
+        date = start_date + timedelta(days=i)
+        date_str = date.strftime('%Y/%m/%d')
+        articles = get_topviews(date_str)
+        for a in articles:
+            daily_views[a['article']].append(a['views'])
+    return daily_views
 
 # 日本時間で今日の日付を取得
 today = datetime.now(ZoneInfo("Asia/Tokyo")).date()
@@ -90,7 +101,7 @@ views_7 = accumulate_views(start_7, end_7)
 ranking_7 = [{'title': t, 'views': v} for t, v in views_7]
 period_7 = f"{format_period_with_weekday(start_7).split('から')[0]}から{format_period_with_weekday(end_7).split('から')[1]}"
 print(f"\n📅 {period_7} の累計ランキング:")
-for i, a in enumerate(ranking_7, 1):
+for i, a in enumerate(ranking_7[:10], 1):
     print(f"{i}. {a['title']} - {a['views']} views")
 
 # 📅 9日前〜15日前（過去7日間の開始日の前日から7日間）
@@ -100,7 +111,7 @@ views_8_14 = accumulate_views(start_8_14, end_8_14)
 ranking_8_14 = [{'title': t, 'views': v} for t, v in views_8_14]
 period_8_14 = f"{format_period_with_weekday(start_8_14).split('から')[0]}から{format_period_with_weekday(end_8_14).split('から')[1]}"
 print(f"\n📅 {period_8_14} の累計ランキング:")
-for i, a in enumerate(ranking_8_14, 1):
+for i, a in enumerate(ranking_8_14[:10], 1):
     print(f"{i}. {a['title']} - {a['views']} views")
 
 # 📅 過去30日間（昨日を含む）
@@ -110,8 +121,40 @@ views_30 = accumulate_views(start_30, end_30)
 ranking_30 = [{'title': t, 'views': v} for t, v in views_30]
 period_30 = f"{format_period_with_weekday(start_30).split('から')[0]}から{format_period_with_weekday(end_30).split('から')[1]}"
 print(f"\n📅 {period_30} の累計ランキング:")
-for i, a in enumerate(ranking_30, 1):
+for i, a in enumerate(ranking_30[:10], 1):
     print(f"{i}. {a['title']} - {a['views']} views")
+
+# 辞書化（タイトル → views）
+views_latest = {a['article']: a['views'] for a in latest_articles}
+views_day_before = {a['article']: a['views'] for a in articles_day_before_yesterday}
+
+growth_daily = []
+for title in views_latest:
+    if title in views_day_before and views_day_before[title] > 0:
+        rate = (views_latest[title] - views_day_before[title]) / views_day_before[title]
+        growth_daily.append({'title': title, 'rate': rate, 'latest': views_latest[title], 'previous': views_day_before[title]})
+
+# 降順でソートして上位10件
+ranking_growth_daily = sorted(growth_daily, key=lambda x: x['rate'], reverse=True)[:10]
+
+# 週平均ビュー数を辞書化
+daily_views = accumulate_daily_views(start_7, end_7)
+
+growth_weekly = []
+for title in views_latest:
+    if title in daily_views and len(daily_views[title]) > 0:
+        weekly_avg = sum(daily_views[title]) / len(daily_views[title])
+        if weekly_avg > 0:
+            rate = (views_latest[title] - weekly_avg) / weekly_avg
+            growth_weekly.append({
+                'title': title,
+                'rate': rate,
+                'latest': views_latest[title],
+                'weekly_avg': weekly_avg
+            })
+
+ranking_growth_weekly = sorted(growth_weekly, key=lambda x: x['rate'], reverse=True)[:10]
+
 
 # JSON保存用データ構造（曜日付き）
 output = {
@@ -122,15 +165,26 @@ output = {
         'ランキング': ranking_day_before_yesterday
     },
     f"{format_period_with_weekday(start_7).split('から')[0]}から{format_period_with_weekday(end_7).split('から')[1]}": {
-        'ランキング': ranking_7
+        'ランキング': ranking_7[:10]
     },
     f"{format_period_with_weekday(start_8_14).split('から')[0]}から{format_period_with_weekday(end_8_14).split('から')[1]}": {
-        'ランキング': ranking_8_14
+        'ランキング': ranking_8_14[:10]
     },
     f"{format_period_with_weekday(start_30).split('から')[0]}から{format_period_with_weekday(end_30).split('から')[1]}": {
-        'ランキング': ranking_30
+        'ランキング': ranking_30[:10]
     }
 }
+
+print(f"\n📈 前日比増加率ランキング:")
+for i, a in enumerate(ranking_growth_daily, 1):
+    print(f"{i}. {a['title']} - {a['rate']:.2%}（{a['previous']} → {a['latest']} views）")
+
+print(f"\n📈 週平均比増加率ランキング:")
+for i, a in enumerate(ranking_growth_weekly[:10], 1):
+    print(f"{i}. {a['title']} - {a['rate']:.2%}（週平均 {int(a['weekly_avg'])} → {a['latest']} views）")
+
+output['前日比増加率ランキング'] = ranking_growth_daily
+output['週平均比増加率ランキング'] = ranking_growth_weekly[:10]
 
 output['更新時刻'] = timestamp
 
