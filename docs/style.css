@@ -160,7 +160,7 @@ section h2 {
 /* 共通：順位列はすべて統一 */
 .ranking-table th:nth-child(1),
 .ranking-table td:nth-child(1) {
-  width: 60px;
+  width: 30px;
 }
 
 /* 標準ランキング（3列） */
